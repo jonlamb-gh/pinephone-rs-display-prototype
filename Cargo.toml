@@ -11,5 +11,6 @@ embedded-graphics-simulator = "0.2"
 #embedded-layout = "0.1"
 
 [dependencies.embedded-layout]
-git = "https://github.com/bugadani/embedded-layout.git"
-branch = "master"
+#git = "https://github.com/bugadani/embedded-layout.git"
+#branch = "master"
+path = "../embedded-layout"

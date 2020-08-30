@@ -13,6 +13,16 @@
 // https://docs.rs/embedded-graphics-simulator/0.2.1/embedded_graphics_simulator/
 
 // need an event system and absolute position to object mappings for the lookup
+// maybe add something like pub fn views(&self) -> impl Iterator<Item = &C>
+// to embedded-layout::LinearLayout/etc
+//
+// need to bind a view with something like ViewId
+// add_view(V, ViewId)
+//
+// then some getter/iter to get the bounds/ids [(ViewId, Rect)] for the
+// absolute bounds of each View item
+//
+// helper object ViewIdGen can be handed around in the constructors to dish them out
 
 // dialer
 //   text-bar for the digits
@@ -22,9 +32,12 @@
 //
 // phonebook
 
-use crate::config::*;
-use crate::keypad::{Key, Keypad};
-use crate::viewable::Viewable;
+use crate::{
+    config::*,
+    keypad::{Key, Keypad},
+    view_id_gen::ViewIdGen,
+    viewable::Viewable,
+};
 use embedded_graphics::{pixelcolor::Rgb888, prelude::*};
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
@@ -37,6 +50,7 @@ use embedded_layout::{
 mod config;
 mod events;
 mod keypad;
+mod view_id_gen;
 mod viewable;
 
 fn main() -> Result<(), core::convert::Infallible> {
@@ -51,7 +65,20 @@ fn main() -> Result<(), core::convert::Infallible> {
         .build();
     let mut window = Window::new("pinephone-rs prototype", &output_settings);
 
-    let mut keypad = Keypad::new();
+    let mut vid_gen = ViewIdGen::new();
+    let mut keypad = Keypad::new(&mut vid_gen);
+
+    // TODO - extract (ViewId, Rect) for each View in the ViewGroup
+    //
+    // iter for Link/ChainElement
+    //
+    // Keypad.view_group()
+    let static_layout = LinearLayout::vertical()
+        .with_spacing(FixedMargin(4))
+        .add_view(keypad.view())
+        .arrange()
+        .align_to(&display_area, horizontal::Center, vertical::Bottom);
+    //println!("{:?}", static_layout.views);
 
     'running: loop {
         let layout = LinearLayout::vertical()

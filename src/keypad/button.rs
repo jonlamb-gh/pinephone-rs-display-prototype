@@ -2,6 +2,7 @@ use crate::{
     config::*,
     events::{TouchEvent, TouchEventHandler},
     keypad::Key,
+    view_id_gen::ViewIdGen,
     viewable::{ViewGroupId, Viewable},
 };
 use embedded_graphics::{
@@ -22,6 +23,7 @@ const TEXT_FONT: Font24x32 = Font24x32;
 
 #[derive(Debug)]
 pub struct Button {
+    vid: ViewId,
     key: Key,
     depressed: bool,
 }
@@ -32,8 +34,9 @@ pub struct ButtonView<'a> {
 }
 
 impl Button {
-    pub fn new(key: Key) -> Self {
+    pub fn new(key: Key, vid_gen: &mut ViewIdGen) -> Self {
         Button {
+            vid: vid_gen.next(),
             key,
             depressed: false,
         }
@@ -88,6 +91,11 @@ impl<'a> View for ButtonView<'a> {
     #[inline]
     fn bounds(&self) -> Rectangle {
         self.bounds
+    }
+
+    #[inline]
+    fn id(&self) -> Option<ViewId> {
+        Some(self.inner.vid)
     }
 }
 

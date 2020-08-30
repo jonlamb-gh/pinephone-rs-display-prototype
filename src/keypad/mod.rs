@@ -1,19 +1,23 @@
 use crate::{
     config::*,
+    view_id_gen::ViewIdGen,
     viewable::{ViewGroupId, Viewable},
 };
 use embedded_graphics::{
     pixelcolor::Rgb888, primitives::Rectangle, style::PrimitiveStyleBuilder, DrawTarget,
 };
 use embedded_layout::{
-    layout::linear::{spacing::Tight, LinearLayout},
+    layout::{
+        linear::{spacing::Tight, LinearLayout},
+        Guard, Link, ViewChainElement, ViewGroup,
+    },
     prelude::*,
 };
 
 mod button;
 mod key;
 
-pub use button::Button;
+pub use button::{Button, ButtonView};
 pub use key::Key;
 
 const STROKE_WIDTH: u32 = 4;
@@ -32,21 +36,21 @@ pub struct KeypadView<'a> {
 }
 
 impl Keypad {
-    pub fn new() -> Self {
+    pub fn new(vid_gen: &mut ViewIdGen) -> Self {
         Keypad {
             buttons: [
-                Button::new(Key::One),
-                Button::new(Key::Two),
-                Button::new(Key::Three),
-                Button::new(Key::Four),
-                Button::new(Key::Five),
-                Button::new(Key::Six),
-                Button::new(Key::Seven),
-                Button::new(Key::Eight),
-                Button::new(Key::Nine),
-                Button::new(Key::Asterisk),
-                Button::new(Key::Zero),
-                Button::new(Key::Pound),
+                Button::new(Key::One, vid_gen),
+                Button::new(Key::Two, vid_gen),
+                Button::new(Key::Three, vid_gen),
+                Button::new(Key::Four, vid_gen),
+                Button::new(Key::Five, vid_gen),
+                Button::new(Key::Six, vid_gen),
+                Button::new(Key::Seven, vid_gen),
+                Button::new(Key::Eight, vid_gen),
+                Button::new(Key::Nine, vid_gen),
+                Button::new(Key::Asterisk, vid_gen),
+                Button::new(Key::Zero, vid_gen),
+                Button::new(Key::Pound, vid_gen),
             ],
         }
     }
@@ -72,6 +76,70 @@ impl<'a> Viewable<'a> for Keypad {
             inner: self,
             bounds: Rectangle::with_size(Point::zero(), KEYPAD_SIZE),
         }
+    }
+}
+
+// RowChain, then combine them
+//type Chain<'a> = chain! { ButtonView<'a>, ButtonView<'a>, ButtonView<'a> };
+
+type Chain<'a> =
+    Link<ViewGroup<Link<ButtonView<'a>, Link<ButtonView<'a>, Link<ButtonView<'a>>>>>, Guard>;
+
+// some trait for this, StaticLayout
+// type Chain = ...
+impl<'a> KeypadView<'a> {
+    // TODO - wip, experimenting with some sort of static layout / ViewGroup
+    // move into KeypadView
+    //
+    //pub fn view_group<C: ViewChainElement, V: View>(&self) -> ViewGroup<Link<V, C>> {
+    //
+    pub fn view_group(&self) -> ViewGroup<Chain> {
+        let primitive_style = PrimitiveStyleBuilder::new()
+            .stroke_color(STROKE)
+            .stroke_width(STROKE_WIDTH)
+            .fill_color(FILL)
+            .build();
+        let primitive = self.bounds.into_styled(primitive_style);
+
+        let row_0 = LinearLayout::horizontal()
+            .with_spacing(Tight)
+            .add_view(self.inner.buttons[0].view())
+            .add_view(self.inner.buttons[1].view())
+            .add_view(self.inner.buttons[2].view())
+            .arrange()
+            .align_to(&primitive, horizontal::Center, vertical::Top);
+        let row_1 = LinearLayout::horizontal()
+            .with_spacing(Tight)
+            .add_view(self.inner.buttons[3].view())
+            .add_view(self.inner.buttons[4].view())
+            .add_view(self.inner.buttons[5].view())
+            .arrange()
+            .align_to(&primitive, horizontal::Center, vertical::Center);
+        let row_2 = LinearLayout::horizontal()
+            .with_spacing(Tight)
+            .add_view(self.inner.buttons[6].view())
+            .add_view(self.inner.buttons[7].view())
+            .add_view(self.inner.buttons[8].view())
+            .arrange()
+            .align_to(&primitive, horizontal::Center, vertical::Bottom);
+        let row_3 = LinearLayout::horizontal()
+            .with_spacing(Tight)
+            .add_view(self.inner.buttons[9].view())
+            .add_view(self.inner.buttons[10].view())
+            .add_view(self.inner.buttons[11].view())
+            .arrange()
+            .align_to(&primitive, horizontal::Center, vertical::Bottom);
+
+        let layout = LinearLayout::vertical()
+            .with_spacing(Tight)
+            .add_view(row_0)
+            //.add_view(row_1)
+            //.add_view(row_2)
+            //.add_view(row_3)
+            .arrange()
+            .align_to(&primitive, horizontal::Center, vertical::Center);
+
+        layout
     }
 }
 

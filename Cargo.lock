@@ -160,7 +160,6 @@ dependencies = [
 [[package]]
 name = "embedded-layout"
 version = "0.1.0"
-source = "git+https://github.com/bugadani/embedded-layout.git#52261542db06a77ad0a70024caeaa5128cae024c"
 dependencies = [
  "embedded-graphics",
 ]
