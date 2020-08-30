@@ -48,6 +48,14 @@ impl Keypad {
         }
     }
 
+    pub fn set_depressed(&mut self, key: Key, depressed: bool) {
+        for b in self.buttons.iter_mut() {
+            if b.key() == key {
+                b.set_depressed(depressed);
+            }
+        }
+    }
+
     pub fn view(&self, position: Point, size: Size) -> KeypadView {
         KeypadView {
             inner: self,

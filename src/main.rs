@@ -34,7 +34,7 @@ mod config;
 mod keypad;
 
 use crate::config::*;
-use crate::keypad::Keypad;
+use crate::keypad::{Key, Keypad};
 
 fn main() -> Result<(), core::convert::Infallible> {
     let mut display: SimulatorDisplay<Rgb888> =
@@ -68,11 +68,11 @@ fn main() -> Result<(), core::convert::Infallible> {
                 }
                 SimulatorEvent::MouseButtonDown { point, .. } => {
                     println!("{:?}", point);
-                    //btn.set_depressed(true);
+                    keypad.set_depressed(Key::Asterisk, true);
                 }
                 SimulatorEvent::MouseButtonUp { point, .. } => {
                     println!("{:?}", point);
-                    //btn.set_depressed(false);
+                    keypad.set_depressed(Key::Asterisk, false);
                 }
                 _ => {}
             }

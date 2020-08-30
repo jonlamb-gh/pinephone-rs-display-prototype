@@ -34,6 +34,10 @@ impl Button {
         }
     }
 
+    pub fn key(&self) -> Key {
+        self.key
+    }
+
     pub fn set_depressed(&mut self, depressed: bool) {
         self.depressed = depressed;
     }
