@@ -1,4 +1,9 @@
-use crate::keypad::Key;
+use crate::{
+    config::*,
+    events::{TouchEvent, TouchEventHandler},
+    keypad::Key,
+    viewable::{ViewGroupId, Viewable},
+};
 use embedded_graphics::{
     fonts::{Font24x32, Text},
     pixelcolor::Rgb888,
@@ -41,8 +46,25 @@ impl Button {
     pub fn set_depressed(&mut self, depressed: bool) {
         self.depressed = depressed;
     }
+}
 
-    pub fn view(&self, position: Point, size: Size) -> ButtonView {
+impl TouchEventHandler for Button {
+    fn handle_touch_event(&mut self, event: TouchEvent) {
+        match event {
+            TouchEvent::Press(_) => self.set_depressed(true),
+            TouchEvent::Release(_) => self.set_depressed(false),
+        }
+    }
+}
+
+impl<'a> Viewable<'a> for Button {
+    type ViewType = ButtonView<'a>;
+
+    fn view_group_id(&self) -> Option<ViewGroupId> {
+        Some(DIALIER_VGID)
+    }
+
+    fn view(&'a self, position: Point, size: Size) -> Self::ViewType {
         ButtonView {
             inner: self,
             bounds: Rectangle::with_size(position, size),

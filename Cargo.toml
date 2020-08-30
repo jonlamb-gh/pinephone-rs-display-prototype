@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 embedded-graphics = "0.6"
 embedded-graphics-simulator = "0.2"
-sdl2 = "0.32"
+#sdl2 = "0.32"
 #embedded-layout = "0.1"
 
 [dependencies.embedded-layout]

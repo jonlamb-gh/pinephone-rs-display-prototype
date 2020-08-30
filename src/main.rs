@@ -12,6 +12,8 @@
 //
 // https://docs.rs/embedded-graphics-simulator/0.2.1/embedded_graphics_simulator/
 
+// need an event system and absolute position to object mappings for the lookup
+
 // dialer
 //   text-bar for the digits
 //   btns: phonebook | dial | delete
@@ -28,10 +30,11 @@ use embedded_layout::{
     layout::linear::{spacing::FixedMargin, LinearLayout},
     prelude::*,
 };
-//use sdl2::keyboard::Keycode;
 
 mod config;
+mod events;
 mod keypad;
+mod viewable;
 
 use crate::config::*;
 use crate::keypad::{Key, Keypad};
@@ -51,21 +54,19 @@ fn main() -> Result<(), core::convert::Infallible> {
     let mut keypad = Keypad::new();
 
     'running: loop {
-        LinearLayout::vertical()
+        let layout = LinearLayout::vertical()
             .with_spacing(FixedMargin(4))
             .add_view(keypad.view(Point::zero(), KEYPAD_SIZE))
             .arrange()
-            .align_to(&display_area, horizontal::Center, vertical::Bottom)
-            .draw(&mut display)?;
+            .align_to(&display_area, horizontal::Center, vertical::Bottom);
+
+        layout.draw(&mut display)?;
 
         window.update(&display);
 
         for event in window.events() {
             match event {
                 SimulatorEvent::Quit => break 'running,
-                SimulatorEvent::KeyDown { keycode, .. } => {
-                    println!("{:?}", keycode);
-                }
                 SimulatorEvent::MouseButtonDown { point, .. } => {
                     println!("{:?}", point);
                     keypad.set_depressed(Key::Asterisk, true);

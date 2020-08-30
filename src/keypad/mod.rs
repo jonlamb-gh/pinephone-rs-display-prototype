@@ -1,3 +1,7 @@
+use crate::{
+    config::*,
+    viewable::{ViewGroupId, Viewable},
+};
 use embedded_graphics::{
     pixelcolor::Rgb888, primitives::Rectangle, style::PrimitiveStyleBuilder, DrawTarget,
 };
@@ -9,7 +13,6 @@ use embedded_layout::{
 mod button;
 mod key;
 
-use crate::config::*;
 pub use button::Button;
 pub use key::Key;
 
@@ -57,6 +60,21 @@ impl Keypad {
     }
 
     pub fn view(&self, position: Point, size: Size) -> KeypadView {
+        KeypadView {
+            inner: self,
+            bounds: Rectangle::with_size(position, size),
+        }
+    }
+}
+
+impl<'a> Viewable<'a> for Keypad {
+    type ViewType = KeypadView<'a>;
+
+    fn view_group_id(&self) -> Option<ViewGroupId> {
+        Some(DIALIER_VGID)
+    }
+
+    fn view(&'a self, position: Point, size: Size) -> Self::ViewType {
         KeypadView {
             inner: self,
             bounds: Rectangle::with_size(position, size),
