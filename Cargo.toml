@@ -1,0 +1,15 @@
+[package]
+name = "pinephone-rs-display-prototype"
+version = "0.1.0"
+authors = ["Jon Lamb"]
+edition = "2018"
+
+[dependencies]
+embedded-graphics = "0.6"
+embedded-graphics-simulator = "0.2"
+sdl2 = "0.32"
+#embedded-layout = "0.1"
+
+[dependencies.embedded-layout]
+git = "https://github.com/bugadani/embedded-layout.git"
+branch = "master"
