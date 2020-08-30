@@ -12,6 +12,5 @@ pub trait Viewable<'a> {
         None
     }
 
-    // TODO - point is always Zero here, size can be config/const
-    fn view(&'a self, position: Point, size: Size) -> Self::ViewType;
+    fn view(&'a self) -> Self::ViewType;
 }

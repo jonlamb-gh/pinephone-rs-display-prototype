@@ -58,13 +58,6 @@ impl Keypad {
             }
         }
     }
-
-    pub fn view(&self, position: Point, size: Size) -> KeypadView {
-        KeypadView {
-            inner: self,
-            bounds: Rectangle::with_size(position, size),
-        }
-    }
 }
 
 impl<'a> Viewable<'a> for Keypad {
@@ -74,10 +67,10 @@ impl<'a> Viewable<'a> for Keypad {
         Some(DIALIER_VGID)
     }
 
-    fn view(&'a self, position: Point, size: Size) -> Self::ViewType {
+    fn view(&'a self) -> Self::ViewType {
         KeypadView {
             inner: self,
-            bounds: Rectangle::with_size(position, size),
+            bounds: Rectangle::with_size(Point::zero(), KEYPAD_SIZE),
         }
     }
 }
@@ -112,30 +105,30 @@ impl<'a> Drawable<Rgb888> for &KeypadView<'a> {
 
         let row_0 = LinearLayout::horizontal()
             .with_spacing(Tight)
-            .add_view(self.inner.buttons[0].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[1].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[2].view(Point::zero(), BTN_SIZE))
+            .add_view(self.inner.buttons[0].view())
+            .add_view(self.inner.buttons[1].view())
+            .add_view(self.inner.buttons[2].view())
             .arrange()
             .align_to(&primitive, horizontal::Center, vertical::Top);
         let row_1 = LinearLayout::horizontal()
             .with_spacing(Tight)
-            .add_view(self.inner.buttons[3].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[4].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[5].view(Point::zero(), BTN_SIZE))
+            .add_view(self.inner.buttons[3].view())
+            .add_view(self.inner.buttons[4].view())
+            .add_view(self.inner.buttons[5].view())
             .arrange()
             .align_to(&primitive, horizontal::Center, vertical::Center);
         let row_2 = LinearLayout::horizontal()
             .with_spacing(Tight)
-            .add_view(self.inner.buttons[6].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[7].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[8].view(Point::zero(), BTN_SIZE))
+            .add_view(self.inner.buttons[6].view())
+            .add_view(self.inner.buttons[7].view())
+            .add_view(self.inner.buttons[8].view())
             .arrange()
             .align_to(&primitive, horizontal::Center, vertical::Bottom);
         let row_3 = LinearLayout::horizontal()
             .with_spacing(Tight)
-            .add_view(self.inner.buttons[9].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[10].view(Point::zero(), BTN_SIZE))
-            .add_view(self.inner.buttons[11].view(Point::zero(), BTN_SIZE))
+            .add_view(self.inner.buttons[9].view())
+            .add_view(self.inner.buttons[10].view())
+            .add_view(self.inner.buttons[11].view())
             .arrange()
             .align_to(&primitive, horizontal::Center, vertical::Bottom);
 

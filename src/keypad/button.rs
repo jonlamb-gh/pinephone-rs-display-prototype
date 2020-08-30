@@ -64,10 +64,10 @@ impl<'a> Viewable<'a> for Button {
         Some(DIALIER_VGID)
     }
 
-    fn view(&'a self, position: Point, size: Size) -> Self::ViewType {
+    fn view(&'a self) -> Self::ViewType {
         ButtonView {
             inner: self,
-            bounds: Rectangle::with_size(position, size),
+            bounds: Rectangle::with_size(Point::zero(), BTN_SIZE),
         }
     }
 }

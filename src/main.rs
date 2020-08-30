@@ -22,6 +22,9 @@
 //
 // phonebook
 
+use crate::config::*;
+use crate::keypad::{Key, Keypad};
+use crate::viewable::Viewable;
 use embedded_graphics::{pixelcolor::Rgb888, prelude::*};
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
@@ -35,9 +38,6 @@ mod config;
 mod events;
 mod keypad;
 mod viewable;
-
-use crate::config::*;
-use crate::keypad::{Key, Keypad};
 
 fn main() -> Result<(), core::convert::Infallible> {
     let mut display: SimulatorDisplay<Rgb888> =
@@ -56,7 +56,7 @@ fn main() -> Result<(), core::convert::Infallible> {
     'running: loop {
         let layout = LinearLayout::vertical()
             .with_spacing(FixedMargin(4))
-            .add_view(keypad.view(Point::zero(), KEYPAD_SIZE))
+            .add_view(keypad.view())
             .arrange()
             .align_to(&display_area, horizontal::Center, vertical::Bottom);
 
